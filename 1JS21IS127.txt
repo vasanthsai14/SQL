@@ -53,6 +53,59 @@ Insert into works_on_127 values(7,'jssise12',102);
 Insert into works_on_127 values(8,'jssise13',103);
 Insert into works_on_127 values(9,'jssise14',104);
 
+SELECT * QUERY
+
+ SELECT * FROM EMPLOYEE_127;
+
+SSN                  FNAME                LNAME                ADDRESS              S     SALARY SUPERSSSN            DNO
+-------------------- -------------------- -------------------- -------------------- - ---------- -------------------- --------------------
+jssise10             M                    SUMIT                Banglore             M      90000                      3
+jssise11             VASANTH              scott                Bangalore            M      80000 jssise10             1
+jssise12             RAJESH               K                    Mangalore            M      75000 jssise11             2
+jssise13             Karthik              k                    Bangalore            M      85000 jssise12             4
+jssise14             CHANDAN              KUMAR                Mangalore            M      88000 jssise13             5
+
+SQL> SELECT * FROM DEPARTMENT_127;
+
+DNO                  DNAME                MGRSTARTD MGRSSN
+-------------------- -------------------- --------- --------------------
+1                    accounts             01-JAN-01 jssise10
+2                    accounts             03-FEB-01 jssise11
+3                    management           04-MAR-01 jssise12
+4                    accounts             05-JUN-01 jssise13
+5                    management           06-APR-01 jssise14
+
+SQL> SELECT * FROM DLOCATION_127;
+
+DLOC                 DNO
+-------------------- --------------------
+Banglore             1
+Bangalore            2
+Mangalore            3
+Bangalore            4
+Mangalore            5
+
+SQL> SELECT * FROM PROJECT_127;
+
+       PNO PNAME                PLOCATION            DNO
+---------- -------------------- -------------------- --------------------
+       100 IOT                  Bangalore            1
+       101 Java                 Bangalore            2
+       102 FSWD                 Mangalore            3
+       103 Big data             Bangalore            4
+       104 Cloud computing      Mangalore            5
+
+SQL> SELECT * FROM WORKS_ON_127;
+
+     HOURS SSN                         PNO
+---------- -------------------- ----------
+         5 jssise10                    100
+         6 jssise11                    101
+         7 jssise12                    102
+         8 jssise13                    103
+         9 jssise14                    104
+
+
 
 (select distinct p.pno 
 from project_127 p,department_127 d,employee_127 e 
@@ -63,19 +116,36 @@ union
 where e1.ssn=w.ssn
 and e1.lname='scott');
 
+       PNO
+----------
+       101
+
+
 
 select e.fname,e.lname,1.1*e.salary as incr_sal
 from employee_127 e,works_on_127 w,project_127 p
 where e.ssn=w.ssn and w.pno=p.pno and p.pname='IOT';
 
+FNAME                LNAME                  INCR_SAL
+-------------------- -------------------- ----------
+M                    SUMIT                     99000
+
 
 select sum(e.salary),max(e.salary),min(e.salary),avg(e.salary)
 from employee_127 e, department_127 d where e.dno=d.dno and d.dname='accounts';
+
+SUM(E.SALARY) MAX(E.SALARY) MIN(E.SALARY) AVG(E.SALARY)
+------------- ------------- ------------- -------------
+       240000         85000         75000         80000
 
 
 select e.fname,e.lname
 from employee_127 e
 where not exists((select pno from project_127 where dno='5') minus (select pno from works_on_127 where e.ssn=ssn));
+
+FNAME                LNAME
+-------------------- --------------------
+CHANDAN              KUMAR
 
 
 Update for 5th query:
@@ -86,9 +156,21 @@ Update employee_127 set supersssn=null,dno='1' where ssn='jssise10';
 Update employee_127 set supersssn='jssise12',dno='1' where ssn='jssise13';
 Update employee_127 set supersssn='jssise13',dno='1' where ssn='jssise14';
 
+SSN                  FNAME                LNAME                ADDRESS              S     SALARY SUPERSSSN            DNO
+-------------------- -------------------- -------------------- -------------------- - ---------- -------------------- --------------------
+jssise10             M                    SUMIT                Banglore             M      90000                      1
+jssise11             VASANTH              scott                Bangalore            M      80000 jssise10             1
+jssise12             RAJESH               K                    Mangalore            M      75000 jssise11             1
+jssise13             Karthik              k                    Bangalore            M      85000 jssise12             1
+jssise14             CHANDAN              KUMAR                Mangalore            M      88000 jssise13             1
+
 
 select e.dno,count(e.ssn) as "No. of Employees" from employee_127 e where
 e.salary>50000 and e.dno in (select e1.dno from employee_127 e1 group by e1.dno having count (e1.dno)>4) group by e.dno;
+
+DNO                  No. of Employees
+-------------------- ----------------
+1                                   5
 
 
 

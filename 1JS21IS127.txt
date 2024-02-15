@@ -1,0 +1,96 @@
+create table department_127(DNO varchar2(20) primary key, DNAME varchar2(20), MGRSTARTDATE date);
+ 
+create table EMPLOYEE_127(SSN varchar2(20) primary key,FNAME varchar2(20), LNAME varchar2(20),ADDRESS varchar2(20),
+SEX char(1),SALARY number(10,2),SUPERSSSN references EMPLOYEE_127(SSN),DNO references DEPARTMENT_127(DNO));
+
+Alter table DEPARTMENT_127 add MGRSSN references EMPLOYEE_127(SSN);
+ 
+create table DLOCATION_127(DLOC varchar2(20),primary key(DNO,DLOC),DNO references department_127(DNO));
+ 
+create table project_127(PNO integer primary key,PNAME varchar2(20), PLOCATION varchar2(20),DNO references department_127(dno));
+ 
+create table works_on_127(HOURS number(2),primary key(PNO,SSN),SSN references employee_127(ssn),PNO references project_127(pno));
+ 
+
+Insert into employee_127(ssn,fname,lname,address,sex,salary) values('jssise10','M','SUMIT','Banglore','M','90000');
+Insert into employee_127(ssn,fname,lname,address,sex,salary) values('jssise11','VASANTH','scott','Bangalore','M','80000');
+Insert into employee_127(ssn,fname,lname,address,sex,salary) values('jssise12','RAJESH','K','Mangalore','M','75000');
+Insert into employee_127(ssn,fname,lname,address,sex,salary) values('jssise13','Karthik','k','Bangalore','M','85000');
+Insert into employee_127(ssn,fname,lname,address,sex,salary) values('jssise14','CHANDAN','KUMAR','Mangalore','M','88000');
+
+
+Insert into department_127 values('1','accounts','01-jan-01','jssise10');
+Insert into department_127 values('2','accounts','03-feb-01','jssise11');
+Insert into department_127 values('3','management','04-mar-01','jssise12');
+Insert into department_127 values('4','accounts','05-jun-01','jssise13');
+Insert into department_127 values('5','management','06-apr-01','jssise14');
+
+
+Update employee_127 set SUPERSSSN='jssise10',dno='1' where ssn='jssise11';
+Update employee_127 set supersSsn='jssise11',dno='2' where ssn='jssise12';
+Update employee_127 set supersSsn=null,dno='3' where ssn='jssise10';
+Update employee_127 set supersSsn='jssise12',dno='4' where ssn='jssise13';
+Update employee_127 set supersSsn='jssise13',dno='5' where ssn='jssise14';
+
+
+Insert into dlocation_127 values('Banglore','1');
+Insert into dlocation_127 values('Bangalore','2');
+Insert into dlocation_127 values('Mangalore','3');
+Insert into dlocation_127 values('Bangalore','4');
+Insert into dlocation_127 values('Mangalore','5');
+
+
+Insert into project_127 values(100,'IOT','Bangalore','1');
+Insert into project_127 values(101,'Java','Bangalore','2');
+Insert into project_127 values(102,'FSWD','Mangalore','3');
+Insert into project_127 values(103,'Big data','Bangalore','4');
+Insert into project_127 values(104,'Cloud computing','Mangalore','5');
+
+
+Insert into works_on_127 values(5,'jssise10',100);
+Insert into works_on_127 values(6,'jssise11',101);
+Insert into works_on_127 values(7,'jssise12',102);
+Insert into works_on_127 values(8,'jssise13',103);
+Insert into works_on_127 values(9,'jssise14',104);
+
+
+(select distinct p.pno 
+from project_127 p,department_127 d,employee_127 e 
+where p.dno=d.dno and d.mgrssn=e.ssn
+and e.lname='scott')
+union 
+(select distinct w.pno from works_on_127 w,employee_127 e1 
+where e1.ssn=w.ssn
+and e1.lname='scott');
+
+
+select e.fname,e.lname,1.1*e.salary as incr_sal
+from employee_127 e,works_on_127 w,project_127 p
+where e.ssn=w.ssn and w.pno=p.pno and p.pname='IOT';
+
+
+select sum(e.salary),max(e.salary),min(e.salary),avg(e.salary)
+from employee_127 e, department_127 d where e.dno=d.dno and d.dname='accounts';
+
+
+select e.fname,e.lname
+from employee_127 e
+where not exists((select pno from project_127 where dno='5') minus (select pno from works_on_127 where e.ssn=ssn));
+
+
+Update for 5th query:
+
+Update employee_127 set supersssn='jssise10',dno='1' where ssn='jssise11';
+Update employee_127 set supersssn='jssise11',dno='1' where ssn='jssise12';
+Update employee_127 set supersssn=null,dno='1' where ssn='jssise10';
+Update employee_127 set supersssn='jssise12',dno='1' where ssn='jssise13';
+Update employee_127 set supersssn='jssise13',dno='1' where ssn='jssise14';
+
+
+select e.dno,count(e.ssn) as "No. of Employees" from employee_127 e where
+e.salary>50000 and e.dno in (select e1.dno from employee_127 e1 group by e1.dno having count (e1.dno)>4) group by e.dno;
+
+
+
+
+

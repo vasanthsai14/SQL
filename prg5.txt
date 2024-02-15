@@ -1,0 +1,229 @@
+insert into employee_012(ssn,name,address,sex,salary)values('jssece01','johnscott','banglore','m',450000);
+insert into employee_012(ssn,name,address,sex,salary)values('jsscse01','james','banglore','m',500000);
+insert into employee_012(ssn,name,address,sex,salary)values('jsscse02','hearn','banglore','m',700000);
+insert into employee_012(ssn,name,address,sex,salary)values('jsscse03','edward','mysuru','m',500000);
+insert into employee_012(ssn,name,address,sex,salary)values('jsscse04','manas','banglore','m',650000);
+insert into employee_012(ssn,name,address,sex,salary)values('jsscse05','sana','manglore','f',450000);
+insert into employee_012(ssn,name,address,sex,salary)values('jsscse06','sneha','banglore','f',800000);
+insert into employee_012(ssn,name,address,sex,salary)values('jssacc01','ahana','manglore','f',350000);
+insert into employee_012(ssn,name,address,sex,salary)values('jssacc02','veena','banglore','f',300000);
+insert into employee_012(ssn,name,address,sex,salary)values('jssise01','rakshitha','mysuru','m',600000);
+insert into employee_012(ssn,name,address,sex,salary)values('jssit01','mahir','banglore','m',500000);
+
+
+
+insert into department_012 values('1','Accounts','01-jan-01','jssacc02');
+insert into department_012 values('2','it','01-aug-01','jssit01');
+insert into department_012 values('3','ece','01-jun-01','jssece01');
+insert into department_012 values('4','ise','01-mar-01','jssise01');
+insert into department_012 values('5','cse','01-jun-01','jsscse05');
+
+update employee_012 set superssn = null,dno='3' where ssn ='jssise03';
+update employee_012 set superssn = 'jsscse02',dno='5' where ssn ='jsscse01';
+update employee_012 set superssn = 'jsscse03',dno='5' where ssn ='jsscse02';
+update employee_012 set superssn = 'jsscse04',dno='5' where ssn ='jsscse03';
+update employee_012 set dno='5',superssn = 'jsscse05' where ssn ='jsscse04';
+update employee_012 set dno='5',superssn = 'jsscse06' where ssn ='jsscse05';
+update employee_012 set dno='5',superssn = null where ssn ='jsscse06';
+update employee_012 set dno='1',superssn = 'jssacc02' where ssn ='jssacc01';
+update employee_012 set dno='1',superssn = null where ssn ='jssacc02';
+update employee_012 set dno='4',superssn = null where ssn ='jssise01';
+update employee_012 set dno='2',superssn = null where ssn ='jssit01';
+
+insert into deloction_012 values('banglore',1);
+insert into deloction_012 values('banglore',2);
+insert into deloction_012 values('banglore',3);
+insert into deloction_012 values('manglore',4);
+insert into deloction_012 values('manglore',5);
+
+insert into project_012 values(100,'iot','banglore',5);
+insert into project_012 values(101,'cloud','banglore',5);
+insert into project_012 values(102,'bigdata','banglore',5);
+insert into project_012 values(103,'sensors','banglore',3);
+insert into project_012 values(104,'bank','banglore',1);
+insert into project_012 values(105,'salary','banglore',1);
+insert into project_012 values(106,'openstack','banglore',4);
+insert into project_012 values(107,'smartcity','banglore',2);
+
+
+insert into workson_012 values('jsscse01',100,4);
+insert into workson_012 values('jsscse01',101,6);
+insert into workson_012 values('jsscse01',102,8);
+insert into workson_012 values('jsscse02',100,10);
+insert into workson_012 values('jsscse04',100,3);
+insert into workson_012 values('jsscse05',101,4);
+insert into workson_012 values('jsscse06',102,5);
+insert into workson_012 values('jsscse03',102,6);
+insert into workson_012 values('jsscse01',103,7);
+insert into workson_012 values('jssacc01',104,5);
+insert into workson_012 values('jssacc02',105,6);
+insert into workson_012 values('jssise01',106,4);
+insert into workson_012 values('jssit01',107,10);
+
+
+
+select distinct p.pno from project_012 p,department_012 d,employee_012 e where p.dno=d.dno and d.mgrssn=e.ssn and e.name='johnscott' union select distinct w.pno from workson_012 w,employee_012 e1 where e1.ssn=w.ssn and e1.name='johnscott';
+
+select e.name,1.1*e.salary as incr_sal from employee_012 e,workson_012 w,project_012 p where e.ssn=w.ssn and w.pno=p.pno and p.pname='iot';
+
+select sum(e.salary),max(e.salary),min(e.salary),avg(e.salary) from employee_012 e,department_012 d where e.dno=d.dno and d.dname='Accounts';
+
+select e.name from employee_012 e where not exists((select pno from project_012 where dno=5) minus (select pno from workson_012 where e.ssn=ssn));
+
+select e.dno,count(e.ssn)as "no. of empoyees" from employee_012 e where e.salary>600000 and e.dno in (select e1.dno from employee_012 e1 group by e1.dno having count(e1.dno)>5) group by e.dno;
+
+SQL> select * from employee_012;
+
+SSN        NAME       ADDRESS              S     SALARY SUPERSSN          DNO
+---------- ---------- -------------------- - ---------- ---------- ----------
+jssece01   johnscott  banglore             m     450000
+jsscse01   james      banglore             m     500000 jsscse02            5
+jsscse02   hearn      banglore             m     700000 jsscse03            5
+jsscse04   manas      banglore             m     650000 jsscse05            5
+jsscse05   sana       manglore             f     450000 jsscse06            5
+jsscse06   sneha      banglore             f     800000                     5
+jssacc01   ahana      manglore             f     350000 jssacc02            1
+jssacc02   veena      banglore             f     300000                     1
+jssise01   rakshitha  mysuru               m     600000                     4
+jssit01    mahir      banglore             m     500000                     2
+jsscse03   edward     mysuru               m     500000 jsscse04            5
+
+11 rows selected.
+
+SQL> select * from department_012;
+
+       DNO DNAME           MGRSTARTD MGRSSN
+---------- --------------- --------- ----------
+         1 Accounts        01-JAN-01 jssacc02
+         2 it              01-AUG-01 jssit01
+         3 ece             01-JUN-01 jssece01
+         4 ise             01-MAR-01 jssise01
+         5 cse             01-JUN-01 jsscse05
+
+SQL> select * from deloction_012;
+
+DLOC              DNO
+---------- ----------
+banglore            1
+banglore            2
+banglore            3
+manglore            4
+manglore            5
+
+SQL> select * from project_012;
+
+       PNO PNAME      PLOCATION         DNO
+---------- ---------- ---------- ----------
+       100 iot        banglore            5
+       101 cloud      banglore            5
+       102 bigdata    banglore            5
+       103 sensors    banglore            3
+       106 openstack  banglore            4
+       107 smartcity  banglore            2
+       104 bank       banglore            1
+       105 salary     banglore            1
+
+8 rows selected.
+
+SQL> select * from workson_012;
+
+SSN               PNO      HOURS
+---------- ---------- ----------
+jsscse01          100          4
+jsscse01          101          6
+jsscse01          102          8
+jsscse02          100         10
+jsscse04          100          3
+jsscse05          101          4
+jsscse06          102          5
+jsscse03          102          6
+jsscse01          103          7
+jssacc01          104          5
+jssacc02          105          6
+
+SSN               PNO      HOURS
+---------- ---------- ----------
+jssise01          106          4
+jssit01           107         10
+
+13 rows selected.
+
+SQL*Plus: Release 11.2.0.2.0 Production on Thu Feb 15 04:11:17 2024
+
+Copyright (c) 1982, 2010, Oracle.  All rights reserved.
+
+SQL> connect
+Enter user-name: ise5a
+Enter password:
+Connected.
+SQL> desc employee_012;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ SSN                                       NOT NULL VARCHAR2(10)
+ NAME                                               VARCHAR2(10)
+ ADDRESS                                            VARCHAR2(20)
+ SEX                                                CHAR(1)
+ SALARY                                             NUMBER(38)
+ SUPERSSN                                           VARCHAR2(10)
+ DNO                                                NUMBER(2)
+
+SQL> desc department_012;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DNO                                       NOT NULL NUMBER(2)
+ DNAME                                              VARCHAR2(15)
+ MGRSTARTDATE                                       DATE
+ MGRSSN                                             VARCHAR2(10)
+
+SQL> desc deloction_012;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DLOC                                      NOT NULL VARCHAR2(10)
+ DNO                                       NOT NULL NUMBER(2)
+
+SQL> desc project_012;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PNO                                       NOT NULL NUMBER(38)
+ PNAME                                              VARCHAR2(10)
+ PLOCATION                                          VARCHAR2(10)
+ DNO                                                NUMBER(2)
+
+SQL> desc workson_012;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ SSN                                       NOT NULL VARCHAR2(10)
+ PNO                                       NOT NULL NUMBER(38)
+ HOURS                                              NUMBER(2)
+
+SQL> select distinct p.pno from project_012 p,department_012 d,employee_012 e where p.dno=d.dno and d.mgrssn=e.ssn and e.name='johnscott' union select distinct w.pno from workson_012 w,employee_012 e1 where e1.ssn=w.ssn and e1.name='johnscott';
+
+       PNO
+----------
+       103
+
+SQL> select e.name,1.1*e.salary as incr_sal from employee_012 e,workson_012 w,project_012 p where e.ssn=w.ssn and w.pno=p.pno and p.pname='iot';
+
+NAME         INCR_SAL
+---------- ----------
+james          550000
+hearn          770000
+manas          715000
+
+SQL> select sum(e.salary),max(e.salary),min(e.salary),avg(e.salary) from employee_012 e,department_012 d where e.dno=d.dno and d.dname='Accounts';
+
+SUM(E.SALARY) MAX(E.SALARY) MIN(E.SALARY) AVG(E.SALARY)
+------------- ------------- ------------- -------------
+       650000        350000        300000        325000
+
+SQL> select e.name from employee_012 e where not exists((select pno from project_012 where dno=5) minus (select pno from workson_012 where e.ssn=ssn));
+
+NAME
+----------
+james
+
+SQL> select e.dno,count(e.ssn)as "no. of empoyees" from employee_012 e where e.salary>600000 and e.dno in (select e1.dno from employee_012 e1 group by e1.dno having count(e1.dno)>5) group by e.dno;
+
+       DNO no. of empoyees
+---------- ---------------
+         5               3
